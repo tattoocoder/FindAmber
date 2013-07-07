@@ -87,6 +87,30 @@ app.get('/search/:q', function(req, res) {
 
 });
 
+app.get('search/:st/:cn', function(req, res) {
+
+  var caseNumber = req.params.cn.toString();
+  var list = cache.get(req.params.st.toString());
+
+
+  if (list === null) {
+    rss.state(req.params.st.toString(), function(list) {
+      list.forEach(function(c) {
+        if (c.caseNumber === caseNumber) {
+          res.send(c, 200);
+        }
+      });
+    });
+  } else {
+    list.forEach(function(c) {
+      if (c.caseNumber === caseNumber) {
+        res.send(c, 200);
+      }
+    });
+  }
+
+});
+
 
 http.createServer(app).listen(app.get('port'), function() {
   console.log("Express server listening on port " + app.get('port'));
