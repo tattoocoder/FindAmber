@@ -1,3 +1,5 @@
+var ams_master_key = '';
+
 /**
  * Module dependencies.
  */
@@ -9,6 +11,7 @@ var express = require('express'),
   request = require('request'),
   rss = require('./rss').rss,
   states = require('./states').states,
+  cache = require('memory-cache'),
   path = require('path');
 
 var app = express();
@@ -45,9 +48,22 @@ app.get('/state/:state', function(req, res) {
   }
 
   try {
-    rss.state(myState.id, function(items) {
-      res.send(items, 200);
-    })
+
+    if (cache.get(myState) === null) {
+
+      rss.state(myState.id, function(items) {
+        // put the state into the cache for 1 hour
+        cache.put(myState, items, 3600000);
+        // send the response
+        res.send(items, 200);
+
+      });
+
+    } else {
+      // send the cached response with a 304
+      res.send(cache.get(myState), 304);
+    }
+
   } catch (ex) {
     res.send("Requested State: " + st + " NOT FOUND", 404);
 
@@ -63,12 +79,99 @@ app.get('/current', function(req, res) {
 
   rss.current(function(items) {
     res.send(items, 200);
-  })
+  });
 
 });
 
+app.get('/search/:q', function(req, res) {
+
+});
 
 
 http.createServer(app).listen(app.get('port'), function() {
   console.log("Express server listening on port " + app.get('port'));
 });
+
+
+
+// jobs to keeps the cache current, 
+
+var currentJob = function() {
+  console.log("Running Current Job.");
+
+  var current = cache.get("current");
+
+  rss.current(function(items) {
+
+    if (current === null) {
+
+      var list = {};
+
+      items.forEach(function(child) {
+        list[child.caseNumber] = child;
+        console.log(child.caseNumber + ':' + child.name);
+      });
+
+      cache.put("current", list, 3600000);
+
+    } else {
+      console.log('checking refresh versus items');
+      var list = cache.get('current');
+      var newList = {};
+      items.forEach(function(c) {
+        if (list[c.caseNumber] === null) {
+          // new child exist send notification
+          console.log('new child');
+        } else {
+          console.log(c.caseNumber + ':' + c.name);
+        }
+
+        newList[c.caseNumber] = c;
+
+      });
+
+      cache.put("current", newList, 3600000);
+
+    }
+
+  });
+
+  console.log('Current Job Complete');
+
+};
+
+var statesJob = function() {
+  console.log("Running States Job.");
+
+  var stateList = states.all();
+  for (var i = 0; i < 50; i++) {
+    var st = stateList[i];
+    console.log('Starting Job for: ' + st.id);
+    try {
+      rss.state(st.id, function(items) {
+
+        // if the items in cache is different then update the cache
+        if (JSON.stringify(items) != JSON.stringify(cache.get(items[0].state))) {
+          console.log('Inserting ' + items[0].state + ' into cache');
+          cache.put(items[0].state, items, 3600000);
+        } else {
+          // update the cache
+          console.log('Updating ' + items[0].state + ' cache');
+          cache.put(items[0].state, items, 3600000);
+        }
+
+      });
+
+    } catch (err) {
+      console.log(st.id + ':' + err);
+      // something went wrong, extend the item in the cache for 1 more hour.
+      if (cache.get(st.id) !== null) {
+        cache.put(st.id, cache.get(st.id), 3600000);
+      }
+    }
+  }
+
+};
+
+setInterval(currentJob, 60000);
+setInterval(statesJob, 2700000);
