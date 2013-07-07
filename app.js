@@ -60,8 +60,8 @@ app.get('/state/:state', function(req, res) {
       });
 
     } else {
-      // send the cached response with a 304
-      res.send(cache.get(myState), 304);
+      // send the cached response w
+      res.send(cache.get(myState), 200);
     }
 
   } catch (ex) {
