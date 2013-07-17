@@ -60,7 +60,7 @@ app.get('/state/:state', function(req, res) {
       });
 
     } else {
-      // send the cached response w
+      // send the cached response with the 200 response
       res.send(cache.get(myState), 200);
     }
 
@@ -77,9 +77,20 @@ app.get('/states', function(req, res) {
 
 app.get('/current', function(req, res) {
 
-  rss.current(function(items) {
-    res.send(items, 200);
-  });
+  var cur = cache.get('current');
+  if (cur === null) {
+    console.log('getting from rss');
+    rss.current(function(items) {
+      cache.put("current", items, 3600000);
+      res.send(items, 200);
+    });
+  } else {
+    console.log('getting from cache');
+    res.send(cur, 200);
+
+  }
+
+
 
 });
 
