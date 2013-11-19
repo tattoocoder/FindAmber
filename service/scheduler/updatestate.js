@@ -1,5 +1,5 @@
-var rss = require('./shared/rss').rss;
-var states = require('./shared/states').states;
+var rss = require('./shared').rss;
+var states = require('./shared').states;
 
 var childTable = tables.getTable('Child');
 
