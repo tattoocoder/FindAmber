@@ -21,28 +21,7 @@ function insertOrUpdateChild(item, st) {
 function stateJob() {
     console.log("Running States Job.");
 
-    var stateList = states.all();
-    for (var i = 0; i < 50; i++) {
-        var st = stateList[i];
-        console.log('Starting Job for: ' + st.id);
-        try {
-            rss.state(st.id, function (items) {
-                // go through each of the items, see if the item is in the database, 
-                // does it need updated or inserted
-                for (var c = 0; c < items.length; c++) {
-                    insertOrUpdateChild(c);
-                }
 
-            });
-        }
-        catch (err) {
-            //console.log(st.id + ':' + err);
-            //// something went wrong, extend the item in the cache for 1 more hour.
-            //if (cache.get(st.id) !== null) {
-            //    cache.put(st.id, cache.get(st.id), 3600000);
-            //}
-        }
-    }
 }
 
 function UpdateState() {
