@@ -18,6 +18,7 @@ function insertOrUpdateChild(item, st) {
     });
 }
 var checkChildren = function (items) {
+<<<<<<< HEAD
     console.log('Check children');
     // go through each of the items, see if the item is in the database, 
     // does it need updated or inserted
@@ -41,6 +42,31 @@ function stateJob() {
             console.error(e);
         }
 
+=======
+                console.log('Check children');
+                // go through each of the items, see if the item is in the database, 
+                // does it need updated or inserted
+                for (var c = 0; c < items.length; c++) {
+                    insertOrUpdateChild(c);
+                }
+
+            };
+            
+function stateJob() {
+    console.log("Running States Job.");
+ var stateList = states.all();
+    for (var i = 0; i < 50; i++) {
+        var st = stateList[i];
+        console.log(st.id);   
+            
+         try  {
+             
+         rss.state(st.id, checkChildren);
+         } catch (e) {
+             console.error(e);
+         }
+         
+>>>>>>> 76bf529ee621f4b1b620e2df88dcc5de71eb0633
     }
 
 }
