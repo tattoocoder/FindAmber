@@ -36,7 +36,6 @@ function stateJob() {
         console.log(st.id);
 
         try {
-
             rss.state(st.id, checkChildren);
         } catch (e) {
             console.error(e);
