@@ -17,13 +17,24 @@ function insertOrUpdateChild(item, st) {
         }
     });
 }
+var checkChildren = function (items) {
+                console.log('Check children');
+                // go through each of the items, see if the item is in the database, 
+                // does it need updated or inserted
+                for (var c = 0; c < items.length; c++) {
+                    insertOrUpdateChild(c);
+                }
 
+            };
+            
 function stateJob() {
     console.log("Running States Job.");
  var stateList = states.all();
     for (var i = 0; i < 50; i++) {
         var st = stateList[i];
         console.log(st.id);   
+        
+         rss.state(st.id, checkChildren);
     }
 
 }
