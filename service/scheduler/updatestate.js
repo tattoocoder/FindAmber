@@ -55,8 +55,9 @@ function stateJob() {
             //}
         }
     }
-};
+}
 
 function UpdateState() {
+    console.log('Starting UpdateState Job');
     stateJob();
 }
