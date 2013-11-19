@@ -37,7 +37,7 @@ var rss = (function() {
 
 	};
 
-	function parseItem($, item) {
+	function parseItem($, item, callback) {
 		var update = {
 			name: "",
 			ageNow: 0,
@@ -144,83 +144,51 @@ var rss = (function() {
 		if (update.caseNumber.length > 0) {
 			var baseUrul = "http://www.missingkids.com/photographs/NCMC" + update.caseNumber;
 
-
-			validateImage(baseUrul + "c1t.jpg", function(){ 
-				update.photos.push(baseUrul + "c1t.jpg");
-			});
-
-
-			validateImage(baseUrul + "c2t.jpg", function(){ 
-				update.photos.push(baseUrul + "c2t.jpg");
-			});
-
-			validateImage(baseUrul + "c3t.jpg", function(){ 
-				update.photos.push(baseUrul + "c3t.jpg");
-			});
-
-			validateImage(baseUrul + "c4t.jpg", function(){  
-				update.photos.push(baseUrul + "c4t.jpg");
-			});
-
-			validateImage(baseUrul + "c5t.jpg", function(){ 
-				update.photos.push(baseUrul + "c5t.jpg");
-			});
-
-
-			validateImage(baseUrul + "c1.jpg", function(){ 
-				update.photoC.push(baseUrul + "c1.jpg");
-			});
-
-			validateImage(baseUrul + "c2.jpg", function(){ 
-				update.photoC.push(baseUrul + "c2.jpg");
-			});
-
-			validateImage(baseUrul + "c3.jpg", function(){ 
-				update.photoC.push(baseUrul + "c3.jpg");
-			});
 			
-			validateImage(baseUrul + "c4.jpg", function(){  
-				update.photoC.push(baseUrul + "c4.jpg");
-			});
+                // small photos
+				update.photos1 = baseUrul + "c1t.jpg";
 
-			validateImage(baseUrul + "c5.jpg", function(){ 
-				update.photoC.push(baseUrul + "c5.jpg");
-			});
+				update.photos2 = baseUrul + "c2t.jpg";
 
-			validateImage(baseUrul + "x1.jpg", function(){ 
-				update.photoX.push(baseUrul + "x1.jpg");
-			});
+				update.photos3 = baseUrul + "c3t.jpg";
 
-			validateImage(baseUrul + "x2.jpg", function(){ 
-				update.photoX.push(baseUrul + "x2.jpg");
-			});
+				update.photos4 = baseUrul + "c4t.jpg";
 
-			validateImage(baseUrul + "x3.jpg", function(){ 
-				update.photoX.push(baseUrul + "x3.jpg");
-			});
+				update.photos5 = baseUrul + "c5t.jpg";
+
+                // large photos
+				update.photoC1 = baseUrul + "c1.jpg";
+
+				update.photoC2 = baseUrul + "c2.jpg";
+
+				update.photoC3 = baseUrul + "c3.jpg";
 			
-			validateImage(baseUrul + "x4.jpg", function(){  
-				update.photoX.push(baseUrul + "x4.jpg");
-			});
+				update.photoC4 = baseUrul + "c4.jpg";
 
-			validateImage(baseUrul + "x5.jpg", function(){  
-				update.photoX.push(baseUrul + "x5.jpg");
-			});
+				update.photoC5 = baseUrul + "c5.jpg";
 
-			validateImage(baseUrul + "a1.jpg", function(){  
+                // Extra photos
+				update.photoX1 = baseUrul + "x1.jpg";
+
+				update.photoX2 = baseUrul + "x2.jpg";
+
+				update.photoX3 = baseUrul + "x3.jpg";
+			
+				update.photoX4 = baseUrul + "x4.jpg";
+
+				update.photoX5 = baseUrul + "x5.jpg";
+
+                // abductor photos
 				update.abductor1 = baseUrul + "a1.jpg";
-			});
 
-			validateImage(baseUrul + "a2.jpg", function(){ 
 				update.abductor2 = baseUrul + "a2.jpg";
-			});
 		}
 
 		// set the poster 
 		update.poster = 'http://www.missingkids.com/missingkids/servlet/PubCaseSearchServlet?act=viewPoster&caseNum=' + update.caseNumber + '&orgPrefix=NCMC&searchLang=en_US';
 
-
-		return update;
+        // add the child to the items
+		callback(update);
 	};
 
 	
@@ -239,8 +207,10 @@ var rss = (function() {
 
 			$('item').each(function(i, item) {
 
-				var update = parseItem($, item);
-				items.push(update);
+			    parseItem($, item, function (child) {
+			        items.push(child);
+
+			    });
 			});
 
 			cb(items);
