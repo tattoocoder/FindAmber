@@ -27,18 +27,6 @@ function stateJob() {
         console.log('Starting Job for: ' + st.id);
         try {
             rss.state(st.id, function (items) {
-                //// if the items in cache is different then update the cache
-                //if (JSON.stringify(items) != JSON.stringify(cache.get(items[0].state))) {
-                //    console.log('Inserting ' + items[0].state + ' into cache');
-                //    cache.put(items[0].state, items, 3600000);
-                //}
-                //else {
-                //    // update the cache
-                //    console.log('Updating ' + items[0].state + ' cache');
-                //    cache.put(items[0].state, items, 3600000);
-                //}
-
-
                 // go through each of the items, see if the item is in the database, 
                 // does it need updated or inserted
                 for (var c = 0; c < items.length; c++) {
