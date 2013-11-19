@@ -37,7 +37,7 @@ var rss = (function() {
 
 	};
 
-	function parseItem($, item, callback) {
+	function parseItem($, item) {
 		var update = {
 			name: "",
 			ageNow: 0,
@@ -188,7 +188,7 @@ var rss = (function() {
 		update.poster = 'http://www.missingkids.com/missingkids/servlet/PubCaseSearchServlet?act=viewPoster&caseNum=' + update.caseNumber + '&orgPrefix=NCMC&searchLang=en_US';
 
         // add the child to the items
-		callback(update);
+		return update;
 	};
 
 	
@@ -207,10 +207,10 @@ var rss = (function() {
 
 			$('item').each(function(i, item) {
 
-			    parseItem($, item, function (child) {
-			        items.push(child);
+			    var child = parseItem($, item);
+			    items.push(child);
 
-			    });
+			    
 			});
 
 			cb(items);
