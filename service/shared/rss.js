@@ -195,6 +195,7 @@ var rss = (function() {
 
 	function download(url, cb) {
 		var items = [];
+		console.log(url);
 
 		request(url, function(error, response, body) {
 
@@ -229,7 +230,7 @@ var rss = (function() {
 		},
 
 		state: function(state, callback) {
-
+		    console.log('Getting state' + state);
 			var url = state_url.replace('~state', state);
 			download(url, callback);
 
