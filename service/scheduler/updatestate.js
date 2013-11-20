@@ -21,6 +21,7 @@ function process(id, name, url) {
                 stateTable.insert(state);
             } else {
                 state.firstRun = false;
+                state.id = results[0].id;
                 stateTable.update(state);
             }
         }
