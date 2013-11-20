@@ -9,7 +9,6 @@ function update(item, user, request) {
                  if (results === null || results.length === 0){
                     var old = results[0];
                     if (item.lastUpdate !== old.lastUpdate) {
-                        item.id = old.id;
                         // go get the data
                         console.log('need to update the data for state');
                          req.get({ url: item.url },function (error, result, body) {
