@@ -28,6 +28,10 @@ var checkChildren = function (items) {
 
 }
 
+var processFeed = function(body){
+    console.log(body);
+}
+
 function stateJob() {
     console.log("Running States Job.");
     var stateList = states.all();
@@ -38,9 +42,7 @@ function stateJob() {
         var url = rss.getStateUrl(st.id);
         console.log(url);
 
-        var html = rss.downloadFeed(url, function (body) {
-            console.log(body);
-        });
+        rss.downloadFeed(url, processFeed);
          
     }
 
