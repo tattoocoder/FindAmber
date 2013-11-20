@@ -33,21 +33,6 @@ function stateJob() {
     var stateList = states.all();
     for (var i = 0; i < 50; i++) {
         var st = stateList[i];
-        console.log(st.id);
-
-        try {
-            rss.state(st.id, checkChildren);
-        } catch (e) {
-            console.error(e);
-        }
-    }
-}
-            
-function stateJob() {
-    console.log("Running States Job.");
-    var stateList = states.all();
-    for (var i = 0; i < 50; i++) {
-        var st = stateList[i];
         console.log(st.id);   
             
          try  {
