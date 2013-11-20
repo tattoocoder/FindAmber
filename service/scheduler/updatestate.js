@@ -1,5 +1,6 @@
 var rss = require('../shared/rssreader'),
     states = require('../shared/states').states,
+    req = require('request'),
     async = require('async');
 
 var myStates = [];
