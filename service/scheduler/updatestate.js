@@ -7,7 +7,7 @@ var myStates = [];
 
 var getData = function(url, callback){
     req.get(
-        { url: testUrl },
+        { url: url },
         function (error, result, body) {
             if(error)
             {
