@@ -59,6 +59,19 @@ function stateJob() {
 
     }
 
+    var testUrl = rss.getStateUrl('FL');
+    var req = require('request');
+    req.get(
+        { url: url },
+        function (error, result, body) {
+            if(error)
+            {
+                console.error(error);
+            } else {
+                console.log(body);
+            }
+        });
+
 }
 
 function UpdateState() {
