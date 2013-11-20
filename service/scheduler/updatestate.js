@@ -18,10 +18,10 @@ function process(id, name, url) {
         success: function (results) {
 
             if (results === null || results.length === 0) {
-                stateTable.insert(item);
+                stateTable.insert(state);
             } else {
                 state.firstRun = false;
-                stateTable.update(item);
+                stateTable.update(state);
             }
         }
     });
