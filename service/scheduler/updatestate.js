@@ -42,8 +42,21 @@ function stateJob() {
         var url = rss.getStateUrl(st.id);
         console.log(url);
 
-        rss.downloadFeed(url, processFeed);
+       // rss.downloadFeed(url, processFeed);
          
+        var req = require('request');
+        req.get(
+            { url: url },
+            function (error, result, body) {
+                if(error)
+                {
+                    console.error(error);
+                } else {
+                    console.log(body);
+                }
+            });
+
+
     }
 
 }
