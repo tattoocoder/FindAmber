@@ -11,12 +11,17 @@ function update(item, user, request) {
                     if (item.lastUpdate !== old.lastUpdate){
                         // go get the data
                         console.log('need to update the data for state');
-                        
+                         req.get({ url: item.url },function (error, result, body) {
+                           if (error) {
+                               console.error(error);
+                           } else {
+                               console.log(body);
+                           }
+                           // execute the update
+                           request.execute();
+                       });
                     }
                 }
             }
         });
-    
-    request.execute();
-
-}
+    }
