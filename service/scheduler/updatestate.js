@@ -21,6 +21,10 @@ function process(id, name, url) {
                 stateTable.insert(state);
             } else {
                 state.firstRun = false;
+<<<<<<< HEAD
+=======
+                state.id = results[0].id;
+>>>>>>> d63a31917d3fb3dcca3794f13265c7f73b28d7ec
                 stateTable.update(state);
             }
         }
