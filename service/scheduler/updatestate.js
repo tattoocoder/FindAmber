@@ -1,4 +1,4 @@
-var rss = require('../shared/rss').rss;
+var rss = require('../shared/rssreader');
 var states = require('../shared/states').states;
 
 var childTable = tables.getTable('Child');
@@ -33,7 +33,14 @@ function stateJob() {
     var stateList = states.all();
     for (var i = 0; i < 50; i++) {
         var st = stateList[i];
-        console.log(st.id + ':' + st.name);   
+        console.log(st.id + ':' + st.name);
+
+        var url = rss.getStateUrl(st.id);
+        console.log(url);
+
+        var html = rss.downloadFeed(url, function (body) {
+            console.log(body);
+        });
          
     }
 
