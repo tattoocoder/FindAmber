@@ -1,35 +1,23 @@
-var rss = require('../shared/rssreader');
-var states = require('../shared/states').states;
+var rss = require('../shared/rssreader'),
+    states = require('../shared/states').states,
+    async = require('async');
 
-var childTable = tables.getTable('Child');
+var myStates = [];
 
-function insertOrUpdateChild(item, st) {
-
-    childTable.where({ name: item.caseNumber, state: st.toUpperCase() })
-    .read({
-        success: function (results) {
-
-            if (results === null || results.length === 0) {
-                childTable.insert(item);
+var getData = function(url, callback){
+    req.get(
+        { url: testUrl },
+        function (error, result, body) {
+            if(error)
+            {
+                console.error(error);
             } else {
-                childTable.update(item);
+                console.log(body);
             }
-        }
-    });
-}
-var checkChildren = function (items) {
 
-    console.log('Check children');
-    // go through each of the items, see if the item is in the database, 
-    // does it need updated or inserted
-    for (var c = 0; c < items.length; c++) {
-        insertOrUpdateChild(c);
-    }
-
-}
-
-var processFeed = function(body){
-    console.log(body);
+            // done let async know
+            callback(null);
+        });
 }
 
 function stateJob() {
@@ -42,35 +30,14 @@ function stateJob() {
         var url = rss.getStateUrl(st.id);
         console.log(url);
 
-       // rss.downloadFeed(url, processFeed);
-         
-        //var req = require('request');
-        //req.get(
-        //    { url: url },
-        //    function (error, result, body) {
-        //        if(error)
-        //        {
-        //            console.error(error);
-        //        } else {
-        //            console.log(body);
-        //        }
-        //    });
-
+        myStates.push(url);
 
     }
 
-    var testUrl = rss.getStateUrl('FL');
-    var req = require('request');
-    req.get(
-        { url: url },
-        function (error, result, body) {
-            if(error)
-            {
-                console.error(error);
-            } else {
-                console.log(body);
-            }
-        });
+    console.log('going to async now');
+    async.each(myStates, getData, function (err) {
+        console.log('all states are done now');
+    });
 
 }
 
@@ -78,3 +45,18 @@ function UpdateState() {
     console.log('Starting UpdateState Job');
     stateJob();
 }
+
+
+//single works - inside of a loop does not
+    //var testUrl = rss.getStateUrl('FL');
+    //var req = require('request');
+    //req.get(
+    //    { url: testUrl },
+    //    function (error, result, body) {
+    //        if(error)
+    //        {
+    //            console.error(error);
+    //        } else {
+    //            console.log(body);
+    //        }
+    //    });
