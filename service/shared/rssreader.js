@@ -56,6 +56,6 @@ exports.getStateUrl = function (state) {
 }
 
 exports.downloadFeed = function (url, callback) {
-    console.log('Downloading feed for ' + state);
+    console.log('Downloading feed for ' + url);
     download(url, callback);
 }
