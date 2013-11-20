@@ -44,17 +44,17 @@ function stateJob() {
 
        // rss.downloadFeed(url, processFeed);
          
-        var req = require('request');
-        req.get(
-            { url: url },
-            function (error, result, body) {
-                if(error)
-                {
-                    console.error(error);
-                } else {
-                    console.log(body);
-                }
-            });
+        //var req = require('request');
+        //req.get(
+        //    { url: url },
+        //    function (error, result, body) {
+        //        if(error)
+        //        {
+        //            console.error(error);
+        //        } else {
+        //            console.log(body);
+        //        }
+        //    });
 
 
     }
