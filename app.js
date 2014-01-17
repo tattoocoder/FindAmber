@@ -94,37 +94,24 @@ app.get('/current', function(req, res) {
 
 });
 
-app.get('/search/:q', function(req, res) {
+app.get('/case/:cn', function(req, res) {
 
+    var child = cache.get(req.params.cn);
+    if (child == null) {
+        res.send(child, 404);
+    }
+    res.send(child, 200);
 });
 
-app.get('search/:st/:cn', function(req, res) {
+//app.get('/search/:q', function(req, res) {
 
-  var caseNumber = req.params.cn.toString();
-  var list = cache.get(req.params.st.toString());
+//});
 
-
-  if (list === null) {
-    rss.state(req.params.st.toString(), function(list) {
-      list.forEach(function(c) {
-        if (c.caseNumber === caseNumber) {
-          res.send(c, 200);
-        }
-      });
-    });
-  } else {
-    list.forEach(function(c) {
-      if (c.caseNumber === caseNumber) {
-        res.send(c, 200);
-      }
-    });
-  }
-
-});
 
 
 http.createServer(app).listen(app.get('port'), function() {
   console.log("Express server listening on port " + app.get('port'));
+
 });
 
 
@@ -178,22 +165,41 @@ var currentJob = function() {
 var statesJob = function() {
   console.log("Running States Job.");
 
-  var stateList = states.all();
+  var stateList = states.all();  
+  var life = 3600000;
+  
   for (var i = 0; i < 50; i++) {
     var st = stateList[i];
     console.log('Starting Job for: ' + st.id);
     try {
       rss.state(st.id, function(items) {
-
+        
         // if the items in cache is different then update the cache
-        if (JSON.stringify(items) != JSON.stringify(cache.get(items[0].state))) {
+        if (JSON.stringify(items) !== JSON.stringify(cache.get(items[0].state))) {
           console.log('Inserting ' + items[0].state + ' into cache');
-          cache.put(items[0].state, items, 3600000);
+          cache.put(items[0].state, items, life);
+
         } else {
           // update the cache
           console.log('Updating ' + items[0].state + ' cache');
-          cache.put(items[0].state, items, 3600000);
+          cache.put(items[0].state, items, life);
         }
+
+
+        // update or insert the individual child records cache
+          for (var c = 0; c < items.length; c++) {
+              var child = items[c];
+              var existing = cache.get(child.caseNumber);
+              if (existing == null) {
+                  cache.put(child.caseNumber, child, life);
+              } else {
+                  // compare to see if the obj has changed
+                  if (JSON.stringify(child) !== JSON.stringify(existing)) {
+                      cache.put(child.caseNumber, child, life);
+                  }
+              }
+
+          }
 
       });
 
@@ -201,7 +207,7 @@ var statesJob = function() {
       console.log(st.id + ':' + err);
       // something went wrong, extend the item in the cache for 1 more hour.
       if (cache.get(st.id) !== null) {
-        cache.put(st.id, cache.get(st.id), 3600000);
+        cache.put(st.id, cache.get(st.id), life);
       }
     }
   }
@@ -210,3 +216,7 @@ var statesJob = function() {
 
 setInterval(currentJob, 60000);
 setInterval(statesJob, 2700000);
+
+// run the jobs on startup
+currentJob();
+statesJob();
