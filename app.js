@@ -124,10 +124,9 @@ var currentJob = function() {
   var current = cache.get("current");
 
   rss.current(function(items) {
-
+    var list = {};
+      var life = 3600000; 
     if (current === null) {
-
-      var list = {};
 
       items.forEach(function(child) {
         list[child.caseNumber] = child;
@@ -138,12 +137,15 @@ var currentJob = function() {
 
     } else {
       console.log('checking refresh versus items');
-      var list = cache.get('current');
+      list = cache.get('current');
+
       var newList = {};
+
       items.forEach(function(c) {
         if (list[c.caseNumber] === null) {
           // new child exist send notification
           console.log('new child');
+
         } else {
           console.log(c.caseNumber + ':' + c.name);
         }
@@ -152,7 +154,7 @@ var currentJob = function() {
 
       });
 
-      cache.put("current", newList, 3600000);
+      cache.put("current", newList, life);
 
     }
 
