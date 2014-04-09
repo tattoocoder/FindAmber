@@ -124,12 +124,14 @@ var currentJob = function() {
   var current = cache.get("current");
 
   rss.current(function(items) {
-    var list = {};
+    var list = [];
       var life = 3600000; 
     if (current === null) {
 
       items.forEach(function(child) {
-        list[child.caseNumber] = child;
+
+          list.push(child);
+        //list[child.caseNumber] = child;
         console.log(child.caseNumber + ':' + child.name);
       });
 
@@ -139,19 +141,24 @@ var currentJob = function() {
       console.log('checking refresh versus items');
       list = cache.get('current');
 
-      var newList = {};
-
+      var newList = [];
+      // refreshed list == items
       items.forEach(function(c) {
-        if (list[c.caseNumber] === null) {
-          // new child exist send notification
-          console.log('new child');
 
-        } else {
-          console.log(c.caseNumber + ':' + c.name);
-        }
+          var exists = false;
 
-        newList[c.caseNumber] = c;
-
+          // cache
+          list.forEach(function(old){
+            if (old.caseNumber === c.caseNumber) {
+                exists = true;
+            }
+          });
+          
+          if (exists !== true){
+                // new child
+                console.log("new child");
+          }
+          newList.push(c);
       });
 
       cache.put("current", newList, life);
