@@ -1,13 +1,23 @@
 {
-  "name": "application-name",
+  "name": "findamber",
+  "description": "amber alert data api",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node app"
   },
+  "author": "Shayne Boyer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tattoocoder/FindAmber"
+  },
   "dependencies": {
-    "express": "3.0.6",
-    "jade": "*",
-    "async": "~0.2.9"
+    "async": "^1.4.2",
+    "cheerio": "^0.19.0",
+    "compression": "^1.5.2",
+    "express": "^4.13.3",
+    "memory-cache": "^0.1.4",
+    "moment": "^2.10.6",
+    "request": "^2.62.0"
   }
 }
