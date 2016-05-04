@@ -46,13 +46,13 @@ app.get('/state/:state', function (req, res) {
                 // put the state into the cache for 1 hour
                 cache.put(myState, items, 3600000);
                 // send the response
-                res.send(items, 200);
+                res.status(200).send(items);
 
             });
 
         } else {
             // send the cached response with the 200 response
-            res.send(cache.get(myState), 200);
+            res.status(200).send(cache.get(myState));
         }
 
     } catch (ex) {
@@ -63,7 +63,7 @@ app.get('/state/:state', function (req, res) {
 });
 
 app.get('/states', function (req, res) {
-    res.send(states.all(), 200);
+    res.status(200).send(states.all());
 });
 
 app.get('/current', function (req, res) {
@@ -73,11 +73,11 @@ app.get('/current', function (req, res) {
         console.log('getting from rss');
         rss.current(function (items) {
             cache.put("current", items, 3600000);
-            res.send(items, 200);
+            res.status(200).send(items);
         });
     } else {
         console.log('getting from cache');
-        res.send(cur, 200);
+        res.status(200).send(cur);
 
     }
 
@@ -89,9 +89,9 @@ app.get('/case/:cn', function (req, res) {
 
     var child = cache.get(req.params.cn);
     if (child == null) {
-        res.send(child, 404);
+        res.status(404).send(child);
     }
-    res.send(child, 200);
+    res.status(200).send(child);
 });
 
 http.createServer(app).listen(app.get('port'), function () {
@@ -121,6 +121,7 @@ var currentJob = function () {
             items.forEach(function (c) {
                 var exists = false;
                 // cache
+
                 list.forEach(function (old) {
                     if (old.caseNumber === c.caseNumber) {
                         exists = true;
@@ -130,6 +131,8 @@ var currentJob = function () {
                 if (exists !== true) {
                     // new child
                     console.log("new child");
+                } else {
+                    console.log("existing no update: " + c.caseNumber);
                 }
                 newList.push(c);
             });
@@ -150,25 +153,27 @@ var statesJob = function () {
         console.log('Starting Job for: ' + st.id);
         try {
             rss.state(st.id, function (items) {
-                // if the items in cache is different then update the cache
-                if (JSON.stringify(items) !== JSON.stringify(cache.get(items[0].state))) {
-                    console.log('Inserting ' + items[0].state + ' into cache');
-                    cache.put(items[0].state, items, life);
-                } else {
-                    // update the cache
-                    console.log('Updating ' + items[0].state + ' cache');
-                    cache.put(items[0].state, items, life);
-                }
-                // update or insert the individual child records cache
-                for (var c = 0; c < items.length; c++) {
-                    var child = items[c];
-                    var existing = cache.get(child.caseNumber);
-                    if (existing == null) {
-                        cache.put(child.caseNumber, child, life);
+                if (items.length > 0) {
+                    // if the items in cache is different then update the cache
+                    if (JSON.stringify(items) !== JSON.stringify(cache.get(items[0].state))) {
+                        console.log('Inserting ' + items[0].state + ' into cache');
+                        cache.put(items[0].state, items, life);
                     } else {
-                        // compare to see if the obj has changed
-                        if (JSON.stringify(child) !== JSON.stringify(existing)) {
+                        // update the cache
+                        console.log('Updating ' + items[0].state + ' cache');
+                        cache.put(items[0].state, items, life);
+                    }
+                    // update or insert the individual child records cache
+                    for (var c = 0; c < items.length; c++) {
+                        var child = items[c];
+                        var existing = cache.get(child.caseNumber);
+                        if (existing == null) {
                             cache.put(child.caseNumber, child, life);
+                        } else {
+                            // compare to see if the obj has changed
+                            if (JSON.stringify(child) !== JSON.stringify(existing)) {
+                                cache.put(child.caseNumber, child, life);
+                            }
                         }
                     }
                 }

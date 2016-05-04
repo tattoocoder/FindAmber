@@ -55,7 +55,7 @@ var rss = (function () {
             d = pubDate.text();
         }
 
-        if (moment(d).isValid()) {
+        if (moment(new Date(d)).isValid()) {
             update.dateReported = moment(d, 'MM-DD-YYYY');
         }
 
